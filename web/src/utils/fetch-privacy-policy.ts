@@ -1,12 +1,15 @@
+import { fetchEnrich } from './fetch-enrich';
 
-export const fetchTosdrPrivacy = async (serviceId: string): Promise<PrivacyPolicyResponse | null> => {
-  const endpoint = `https://privacy-policies.as93.workers.dev/${serviceId}`;
-  try {
-    return await fetch(endpoint).then((res) => res.json());
-  } catch (error) {
-    console.error('Error fetching privacy policy data:', error);
-    return null;
-  }
+// Wrap the flat ToS;DR v3 record in the shape the app already consumes.
+export const fetchTosdrPrivacy = async (
+  serviceId: string,
+): Promise<PrivacyPolicyResponse | null> => {
+  const parameters = await fetchEnrich<Params>(
+    'ToS;DR',
+    `/v1/enrich/privacy/${serviceId}`,
+    `service ${serviceId}`,
+  );
+  return parameters && { error: 0, message: '', parameters };
 };
 
 interface Document {

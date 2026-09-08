@@ -1,13 +1,13 @@
+import { fetchEnrich } from './fetch-enrich';
 
-export const fetchDiscordInfo = async (discordInvite: string): Promise<DiscordInfo | null> => {
-  const endpoint = `https://discord-invite-info.as93.net/${discordInvite}`;
-  try {
-    return await fetch(endpoint).then((res) => res.json());
-  } catch (error) {
-    console.error('Error fetching discord data:', error);
-    return null;
-  }
-};
+export const fetchDiscordInfo = (
+  discordInvite: string,
+): Promise<DiscordInfo | null> =>
+  fetchEnrich<DiscordInfo>(
+    'Discord',
+    `/v1/enrich/discord/${discordInvite}`,
+    discordInvite,
+  );
 
 export interface DiscordInfo {
   inviteCode: string;

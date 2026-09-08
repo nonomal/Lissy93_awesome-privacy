@@ -1,13 +1,11 @@
+import { fetchEnrich } from './fetch-enrich';
 
-export const fetchWebsiteInfo = async (url: string): Promise<WebsiteData | null> => {
-  const endpoint = `https://site-info-fetch.as93.workers.dev/?url=${url}`;
-  try {
-    return await fetch(endpoint).then((res) => res.json());
-  } catch (error) {
-    console.error('Error fetching website info:', error);
-    return null;
-  }
-};
+export const fetchWebsiteInfo = (url: string): Promise<WebsiteData | null> =>
+  fetchEnrich<WebsiteData>(
+    'Website',
+    `/v1/enrich/website?url=${encodeURIComponent(url)}`,
+    url,
+  );
 
 interface DNSRecord {
   target: string;
@@ -19,10 +17,10 @@ interface DNSRecord {
 
 interface DNSRecords {
   ns: {
-      records: DNSRecord[];
+    records: DNSRecord[];
   };
   mx: {
-      records: DNSRecord[];
+    records: DNSRecord[];
   };
 }
 
@@ -60,7 +58,7 @@ interface Redirection {
   found: boolean;
   external: boolean;
   url: string;
-  redirects: any[];
+  redirects: string[];
 }
 
 interface ResponseHeaders {

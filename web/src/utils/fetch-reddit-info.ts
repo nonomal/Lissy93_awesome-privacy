@@ -1,13 +1,13 @@
+import { fetchEnrich } from './fetch-enrich';
 
-export const fetchRedditInfo = async (subreddit: string): Promise<RedditData | null> => {
-  const endpoint = `https://subreddit-info.as93.net/${subreddit}`;
-  try {
-    return await fetch(endpoint).then((res) => res.json());
-  } catch (error) {
-    console.error('Error fetching reddit data:', error);
-    return null;
-  }
-};
+export const fetchRedditInfo = (
+  subreddit: string,
+): Promise<RedditData | null> =>
+  fetchEnrich<RedditData>(
+    'Reddit',
+    `/v1/enrich/reddit/${subreddit}`,
+    `r/${subreddit}`,
+  );
 
 interface SubredditInfo {
   name: string | null;

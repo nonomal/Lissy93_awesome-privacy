@@ -1,13 +1,17 @@
+import { fetchEnrich } from './fetch-enrich';
 
-export const fetchIosInfo = async (iosUrl: string): Promise<IoSApiResponse | null> => {
-  const endpoint = `https://ios-app-info.as93.net?appStoreUrl=${iosUrl}`;
-  try {
-    return await fetch(endpoint).then((res) => res.json());
-  } catch (error) {
-    console.error('Error fetching ios info:', error);
-    return null;
-  }
+// Pull the id from an App Store URL's `/id123` segment, else pass it through.
+const extractId = (iosUrl: string): string => {
+  const match = iosUrl.match(/\/id(\d+)/);
+  return match ? match[1] : iosUrl;
 };
+
+export const fetchIosInfo = (iosUrl: string): Promise<IoSApiResponse | null> =>
+  fetchEnrich<IoSApiResponse>(
+    'iOS',
+    `/v1/enrich/ios/${extractId(iosUrl)}`,
+    iosUrl,
+  );
 
 export interface IoSApiResponse {
   artistViewUrl: string;

@@ -1,17 +1,16 @@
+import { fetchEnrich } from './fetch-enrich';
 
-const doubleCheckPackageName = (packageStr: string) => {
-  return packageStr.includes('id=') ? packageStr.split('id=')[1] : packageStr;
-}
+const extractPackage = (str: string): string =>
+  str.includes('id=') ? str.split('id=')[1] : str;
 
-export const fetchAndroidInfo = async (androidPackage: string): Promise<AndroidInfo | null> => {
-  const endpoint = `https://android-app-privacy.as93.net/${doubleCheckPackageName(androidPackage)}`;
-  try {
-    return await fetch(endpoint).then((res) => res.json());
-  } catch (error) {
-    console.error('Error fetching android data:', error);
-    return null;
-  }
-};
+export const fetchAndroidInfo = (
+  androidPackage: string,
+): Promise<AndroidInfo | null> =>
+  fetchEnrich<AndroidInfo>(
+    'Android',
+    `/v1/enrich/android/${extractPackage(androidPackage)}`,
+    androidPackage,
+  );
 
 interface Tracker {
   id: number;
@@ -43,5 +42,3 @@ export interface AndroidInfo {
   trackers: Tracker[];
   permissions: string[];
 }
-
-
